@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package com.epam.grpc.intro.messages;
+
+option java_package = "com.epam.grpc.intro.messages.proto";
+option java_multiple_files = true;
+
+message PriceRequest {
+  string product = 1;
+}
+
+message PriceResponse {
+  string product = 1;
+  double price = 2;
+  PriceType price_type = 3;
+}
+
+enum PriceType {
+  SOURCE = 0;
+  OVERRIDE = 1;
+}
+
+message PriceOverride {
+  string product = 1;
+  double price = 2;
+}
+
+message PriceOverrideSummary {
+  int64 timestamp = 1;
+  repeated PriceOverride priceOverrides = 2;
+}
+
+service PriceService {
+  rpc requestPrice(PriceRequest) returns (PriceResponse);
+  rpc streamPrices(PriceRequest) returns (stream PriceResponse);
+  rpc streamMultiplePrices(stream PriceRequest) returns (stream PriceResponse);
+}
+
+service PriceOverrideService {
+  rpc streamPriceOverrides(stream PriceOverride) returns (PriceOverrideSummary);
+}
