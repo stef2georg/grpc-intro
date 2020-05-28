@@ -30,7 +30,7 @@ final class StreamObserverWithErrorHandling<V> implements StreamObserver<V> {
         try {
             streamObserver.onError(throwable);
         } catch (final StatusRuntimeException exception) {
-            LOGGER.info("Unable to send error {}!", throwable, exception);
+            LOGGER.warn("Unable to send error {}!", throwable, exception);
         }
     }
 
@@ -39,7 +39,7 @@ final class StreamObserverWithErrorHandling<V> implements StreamObserver<V> {
         try {
             streamObserver.onCompleted();
         } catch (final StatusRuntimeException exception) {
-            LOGGER.info("Unable to send completed!", exception);
+            LOGGER.warn("Unable to send completed!", exception);
         }
     }
 
