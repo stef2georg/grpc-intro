@@ -19,7 +19,7 @@ final class PriceOverrideService extends PriceOverrideServiceGrpc.PriceOverrideS
     @Override
     public StreamObserver<PriceOverride> streamPriceOverrides(final StreamObserver<PriceOverrideSummary> priceOverrideSummaryObserver) {
         final StreamObserver<PriceOverrideSummary> wrappedPriceResponseObserver = StreamObservers.threadSafeWithErrorHandling(priceOverrideSummaryObserver);
-        return new PriceOverrideObserver(productMarket, priceOverrideSummaryObserver);
+        return new PriceOverrideObserver(productMarket, wrappedPriceResponseObserver);
     }
 
 }

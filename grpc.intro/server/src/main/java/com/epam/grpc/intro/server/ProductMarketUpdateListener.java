@@ -2,6 +2,7 @@ package com.epam.grpc.intro.server;
 
 import com.epam.grpc.intro.messages.proto.PriceRequest;
 import com.epam.grpc.intro.messages.proto.PriceResponse;
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
@@ -34,7 +35,10 @@ public final class ProductMarketUpdateListener {
 
     @PreDestroy
     private void stop() {
-        productToPriceResponseObservers.values().stream().flatMap(Set::stream).forEach(StreamObserver::onCompleted);
+        productToPriceResponseObservers.values()
+                .stream()
+                .flatMap(Set::stream)
+                .forEach(observer -> observer.onError(Status.UNAVAILABLE.asRuntimeException()));
     }
 
     void addPriceResponseObserver(final PriceRequest priceRequest, final StreamObserver<PriceResponse> priceResponseObserver) {

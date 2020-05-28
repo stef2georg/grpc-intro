@@ -22,7 +22,7 @@ final class PriceOverrideObserver implements StreamObserver<PriceOverride> {
     PriceOverrideObserver(final ProductMarket productMarket, final StreamObserver<PriceOverrideSummary> priceOverrideSummaryObserver) {
         this.productMarket = productMarket;
         this.priceOverrideSummaryObserver = priceOverrideSummaryObserver;
-        priceOverrides = new CopyOnWriteArrayList<>();
+        this.priceOverrides = new CopyOnWriteArrayList<>();
     }
 
     @Override
