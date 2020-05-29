@@ -32,7 +32,6 @@ public class DemoService extends DemoServiceGrpc.DemoServiceImplBase {
 
             @Override
             public void onError(Throwable throwable) {
-                responseObserver.onCompleted();
             }
 
             @Override
@@ -55,7 +54,6 @@ public class DemoService extends DemoServiceGrpc.DemoServiceImplBase {
 
             @Override
             public void onError(Throwable throwable) {
-                responseObserver.onCompleted();
             }
 
             @Override

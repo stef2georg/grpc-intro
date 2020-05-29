@@ -12,7 +12,7 @@ import io.grpc.stub.StreamObserver;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
-public class Client {
+public class ClientMain {
     public static void main(String[] args) {
         ManagedChannel managedChannel = ManagedChannelBuilder.forAddress("localhost", 8080)
                 .usePlaintext()
@@ -41,8 +41,8 @@ public class Client {
 
         }
 
-        DemoServiceGrpc.DemoServiceStub stub = DemoServiceGrpc.newStub(managedChannel);
-        stub.sendRequest(request, new StreamObserver<>() {
+        DemoServiceGrpc.DemoServiceStub asynchronousStub = DemoServiceGrpc.newStub(managedChannel);
+        asynchronousStub.sendRequest(request, new StreamObserver<>() {
             @Override
             public void onNext(Response response) {
 
@@ -59,7 +59,7 @@ public class Client {
             }
         });
 
-        stub.streamResponses(request, new StreamObserver<>() {
+        asynchronousStub.streamResponses(request, new StreamObserver<>() {
             @Override
             public void onNext(Response response) {
 
@@ -79,7 +79,7 @@ public class Client {
         Request request1 = Request.newBuilder().build();
         Request request2 = Request.newBuilder().build();
 
-        StreamObserver<Request> requestObserver = stub.streamRequests(new StreamObserver<>() {
+        StreamObserver<Request> requestObserver = asynchronousStub.streamRequests(new StreamObserver<>() {
             @Override
             public void onNext(Response response) {
 
@@ -100,7 +100,7 @@ public class Client {
         requestObserver.onNext(request2);
         requestObserver.onCompleted();
 
-        StreamObserver<Request> requestObserver2 = stub.streamRequestsAndResponses(new StreamObserver<>() {
+        StreamObserver<Request> requestObserver2 = asynchronousStub.streamRequestsAndResponses(new StreamObserver<>() {
             @Override
             public void onNext(Response response) {
 
