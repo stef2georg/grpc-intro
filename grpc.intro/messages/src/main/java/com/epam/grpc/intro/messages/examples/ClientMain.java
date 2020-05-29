@@ -1,4 +1,4 @@
-package com.epam.grpc.intro.messages;
+package com.epam.grpc.intro.messages.examples;
 
 import com.epam.grpc.intro.messages.example.proto.DemoServiceGrpc;
 import com.epam.grpc.intro.messages.example.proto.Request;

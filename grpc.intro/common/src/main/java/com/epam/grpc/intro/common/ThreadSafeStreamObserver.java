@@ -2,7 +2,7 @@ package com.epam.grpc.intro.common;
 
 import io.grpc.stub.StreamObserver;
 
-final class ThreadSafeStreamObserver<V> implements StreamObserver<V> {
+public final class ThreadSafeStreamObserver<V> implements StreamObserver<V> {
 
     private final StreamObserver<V> streamObserver;
 

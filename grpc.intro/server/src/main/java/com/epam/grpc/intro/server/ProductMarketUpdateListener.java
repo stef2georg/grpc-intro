@@ -3,16 +3,12 @@ package com.epam.grpc.intro.server;
 import com.epam.grpc.intro.messages.proto.PriceRequest;
 import com.epam.grpc.intro.messages.proto.PriceResponse;
 import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public final class ProductMarketUpdateListener {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductMarketUpdateListener.class);
 
     private final ProductMarket productMarket;
 
@@ -48,6 +42,10 @@ public final class ProductMarketUpdateListener {
         productMarket.requestPrice(priceRequest);
     }
 
+    void removePriceResponseObserver(final StreamObserver<PriceResponse> priceResponseObserver) {
+        productToPriceResponseObservers.values().forEach(priceResponseObservers -> priceResponseObservers.remove(priceResponseObserver));
+    }
+
     void onUpdatedPrices(final List<PriceResponse> updatedPriceResponses) {
         for (final PriceResponse updatedPriceResponse : updatedPriceResponses) {
             final String product = updatedPriceResponse.getProduct();
@@ -55,18 +53,8 @@ public final class ProductMarketUpdateListener {
                 continue;
             }
 
-            final Set<StreamObserver<PriceResponse>> errorPriceResponseObservers = new HashSet<>();
-            final Set<StreamObserver<PriceResponse>> priceResponseObservers = productToPriceResponseObservers.get(product);
-            for (final StreamObserver<PriceResponse> priceResponseObserver : priceResponseObservers) {
-                try {
-                    priceResponseObserver.onNext(updatedPriceResponse);
-                } catch (final StatusRuntimeException exception) {
-                    LOGGER.error("Removing observer - unable to send price response {}", updatedPriceResponse, exception);
-                    errorPriceResponseObservers.add(priceResponseObserver);
-                }
-            }
-
-            priceResponseObservers.removeAll(errorPriceResponseObservers);
+            productToPriceResponseObservers.get(product)
+                    .forEach(priceResponseObserver -> priceResponseObserver.onNext(updatedPriceResponse));
         }
     }
 

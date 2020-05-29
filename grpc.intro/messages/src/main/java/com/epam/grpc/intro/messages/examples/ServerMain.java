@@ -1,4 +1,4 @@
-package com.epam.grpc.intro.messages;
+package com.epam.grpc.intro.messages.examples;
 
 import io.grpc.Server;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;

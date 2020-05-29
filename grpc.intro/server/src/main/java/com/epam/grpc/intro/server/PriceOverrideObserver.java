@@ -29,20 +29,17 @@ final class PriceOverrideObserver implements StreamObserver<PriceOverride> {
     public void onNext(final PriceOverride priceOverride) {
         priceOverrides.add(priceOverride);
         productMarket.overridePrice(priceOverride);
+
+        LOGGER.info("Price override: {}", priceOverride);
     }
 
     @Override
     public void onError(final Throwable throwable) {
         LOGGER.error("Error in price override stream!", throwable);
-        sendPriceOverrideSummary();
     }
 
     @Override
     public void onCompleted() {
-        sendPriceOverrideSummary();
-    }
-
-    private void sendPriceOverrideSummary() {
         final PriceOverrideSummary priceOverrideSummary = PriceOverrideSummary.newBuilder()
                 .setTimestamp(System.currentTimeMillis())
                 .addAllPriceOverrides(priceOverrides)
@@ -50,6 +47,8 @@ final class PriceOverrideObserver implements StreamObserver<PriceOverride> {
 
         priceOverrideSummaryObserver.onNext(priceOverrideSummary);
         priceOverrideSummaryObserver.onCompleted();
+
+        LOGGER.info("Price override stream completed");
     }
 
 }

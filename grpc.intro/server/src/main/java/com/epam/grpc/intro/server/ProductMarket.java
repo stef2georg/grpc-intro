@@ -32,7 +32,7 @@ class ProductMarket {
 
     @PostConstruct
     private void start() {
-        priceUpdateExecutor.scheduleAtFixedRate(this::updatePrices, 5, 5, TimeUnit.SECONDS);
+        priceUpdateExecutor.scheduleAtFixedRate(this::updatePrices, 1, 1, TimeUnit.SECONDS);
     }
 
     @PreDestroy

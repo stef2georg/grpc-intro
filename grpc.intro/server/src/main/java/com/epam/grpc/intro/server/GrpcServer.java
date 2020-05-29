@@ -11,20 +11,30 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Component
 final class GrpcServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GrpcServer.class);
 
+    private final ExecutorService applicationExecutor;
+
     private final Server server;
 
     @Autowired
     private GrpcServer(
+            @Value("${application.executor.pool.size}") final int applicationExecutorPoolSize,
             @Value("${grpc.server.port}") final int port,
             final PriceService priceService,
             final PriceOverrideService priceOverrideService) {
+        applicationExecutor = Executors.newFixedThreadPool(applicationExecutorPoolSize);
         server = NettyServerBuilder.forPort(port)
+                .executor(applicationExecutor)
+                .keepAliveTime(1, TimeUnit.MINUTES)
+                .permitKeepAliveTime(1, TimeUnit.MINUTES)
                 .addService(priceService)
                 .addService(priceOverrideService)
                 .build();
@@ -38,6 +48,7 @@ final class GrpcServer {
 
     @PreDestroy
     private void destroy() {
+        applicationExecutor.shutdownNow();
         server.shutdownNow();
         LOGGER.info("Server stopped!");
     }
